@@ -73,14 +73,16 @@ where
         key: &StorageKey,
     ) -> Result<Option<LFSObject>, Self::Error> {
         // Use the first part of the SHA256 as the nonce.
-        let mut nonce: [u8; 24] = [0; 24];
-        nonce.copy_from_slice(&key.oid().bytes()[0..24]);
+        // comment out encryption -
+        // let mut nonce: [u8; 24] = [0; 24];
+        // nonce.copy_from_slice(&key.oid().bytes()[0..24]);
 
-        let chacha = ChaCha::new_xchacha20(&self.key, &nonce);
+        // let chacha = ChaCha::new_xchacha20(&self.key, &nonce);
 
         Ok(self.storage.get(key).await?.map(move |obj| {
             let (len, stream) = obj.into_parts();
-            LFSObject::new(len, Box::pin(xor_stream(chacha, stream)))
+            LFSObject::new(len, Box::pin(stream))
+            // LFSObject::new(len, Box::pin(xor_stream(chacha, stream)))
         }))
     }
 
@@ -90,13 +92,14 @@ where
         value: LFSObject,
     ) -> Result<(), Self::Error> {
         // Use the first part of the SHA256 as the nonce.
-        let mut nonce: [u8; 24] = [0; 24];
-        nonce.copy_from_slice(&key.oid().bytes()[0..24]);
+        // comment out encryption
+        // let mut nonce: [u8; 24] = [0; 24];
+        // nonce.copy_from_slice(&key.oid().bytes()[0..24]);
 
-        let chacha = ChaCha::new_xchacha20(&self.key, &nonce);
+        // let chacha = ChaCha::new_xchacha20(&self.key, &nonce);
 
         let (len, stream) = value.into_parts();
-        let stream = xor_stream(chacha, stream);
+        // let stream = xor_stream(chacha, stream);
 
         self.storage
             .put(key, LFSObject::new(len, Box::pin(stream)))
