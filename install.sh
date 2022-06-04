@@ -4,5 +4,6 @@
 brew install rust
 
 # install to /usr/local/bin
-cp start_lfs_server.sh /usr/local/bin/start_lfs_server
-chmod +x /usr/local/bin/start_lfs_server
+DIR=$(PWD)
+chmod +x start_lfs_server.sh
+ln -s ${PWD}/start_lfs_server.sh /usr/local/bin/start_lfs_server
